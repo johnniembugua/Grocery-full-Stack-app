@@ -31,7 +31,7 @@ class APIService {
     }
   }
 
-  Future<List<Product>?> getFilterModel(
+  Future<List<Product>?> getProducts(
       ProductFilterModel productFilterModel) async {
     Map<String, String> requestHeaders = {'Content-Type': 'appliacation/json'};
 
@@ -41,6 +41,9 @@ class APIService {
     };
     if (productFilterModel.categoryId != null) {
       queryString["categoryId"] = productFilterModel.categoryId!;
+    }
+    if (productFilterModel.sortBy != null) {
+      queryString['sort'] = productFilterModel.sortBy!;
     }
     var url = Uri.http(Config.apiURL, Config.productAPI, queryString);
 
