@@ -1,26 +1,27 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/api/api_service.dart';
-import 'package:grocery_app/config.dart';
 import 'package:snippet_coder_utils/FormHelper.dart';
 import 'package:snippet_coder_utils/ProgressHUD.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+import '../api/api_service.dart';
+import '../config.dart';
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _LoginPageState extends State<LoginPage> {
   static final GlobalKey<FormState> globalKey = GlobalKey<FormState>();
   bool isAsyncCallProcess = false;
-  String? fullName;
+
   String? password;
-  String? confirmPassword;
+
   String? email;
   bool hidePassword = true;
-  bool hideConfirmPassword = true;
+  bool isRemember = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
         child: ProgressHUD(
           child: Form(
             key: globalKey,
-            child: _registerUi(context),
+            child: _loginUi(context),
           ),
           inAsyncCall: isAsyncCallProcess,
           opacity: .3,
@@ -40,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _registerUi(BuildContext context) {
+  Widget _loginUi(BuildContext context) {
     return SingleChildScrollView(
         child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -75,41 +76,12 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             const Center(
               child: Text(
-                "Register",
+                "Login",
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                     color: Colors.deepOrangeAccent),
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            FormHelper.inputFieldWidget(
-              context,
-              "FullName",
-              "Full Name",
-              (onValidateVal) {
-                if (onValidateVal.isEmpty) {
-                  return "* Required";
-                }
-                return null;
-              },
-              (onSavedVal) {
-                fullName = onSavedVal.toString().trim();
-              },
-              showPrefixIcon: true,
-              prefixIcon: const Icon(Icons.face),
-              borderRadius: 10,
-              contentPadding: 15,
-              fontSize: 14,
-              prefixIconPaddingLeft: 10,
-              borderColor: Colors.grey.shade400,
-              textColor: Colors.black,
-              prefixIconColor: Colors.black,
-              hintColor: Colors.black.withOpacity(.6),
-              backgroundColor: Colors.grey.shade100,
-              borderFocusColor: Colors.grey.shade200,
             ),
             const SizedBox(
               height: 10,
@@ -192,83 +164,39 @@ class _RegisterPageState extends State<RegisterPage> {
             const SizedBox(
               height: 10,
             ),
-            FormHelper.inputFieldWidget(
-              context,
-              "confirmPassword",
-              "Confirm Password",
-              (onValidateVal) {
-                if (onValidateVal.isEmpty) {
-                  return "* Required";
-                }
-                if (onValidateVal != password) {
-                  return "Confirm Password not matched";
-                }
-
-                return null;
-              },
-              (onSavedVal) {
-                confirmPassword = onSavedVal.toString().trim();
-              },
-              showPrefixIcon: true,
-              prefixIcon: const Icon(Icons.lock_open),
-              borderRadius: 10,
-              contentPadding: 15,
-              fontSize: 14,
-              prefixIconPaddingLeft: 10,
-              borderColor: Colors.grey.shade400,
-              textColor: Colors.black,
-              prefixIconColor: Colors.black,
-              hintColor: Colors.black.withOpacity(.6),
-              backgroundColor: Colors.grey.shade100,
-              borderFocusColor: Colors.grey.shade200,
-              obscureText: hideConfirmPassword,
-              suffixIcon: IconButton(
-                onPressed: () {
+            FormHelper.submitButton(
+              "Sign In",
+              () {
+                if (validateSave()) {
+                  //API Request
                   setState(() {
-                    hideConfirmPassword = !hideConfirmPassword;
+                    isAsyncCallProcess = true;
                   });
-                },
-                color: Colors.redAccent.withOpacity(.4),
-                icon: Icon(hideConfirmPassword
-                    ? Icons.visibility_off
-                    : Icons.visibility),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            FormHelper.submitButton("Sign Up", () {
-              if (validateSave()) {
-                //API Request
-                setState(() {
-                  isAsyncCallProcess = true;
-                });
-                APIService.registerUser(fullName!, email!, password!)
-                    .then((response) {
-                  setState(() {
-                    isAsyncCallProcess = false;
+                  APIService.loginUser(email!, password!).then((response) {
+                    setState(() {
+                      isAsyncCallProcess = false;
+                    });
+                    if (response) {
+                      FormHelper.showSimpleAlertDialog(context, Config.appName,
+                          "Login Completed successfully", "OK", () {
+                        Navigator.pop(context);
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, "/home", (route) => false);
+                      });
+                    } else {
+                      FormHelper.showSimpleAlertDialog(
+                          context, Config.appName, "Login Failed", "OK", () {
+                        Navigator.pop(context);
+                      });
+                    }
                   });
-                  if (response) {
-                    FormHelper.showSimpleAlertDialog(context, Config.appName,
-                        "Registration Conmpleted successfully", "OK", () {
-                      Navigator.pop(context);
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil("/login", (route) => false);
-                    });
-                  } else {
-                    FormHelper.showSimpleAlertDialog(
-                        context, Config.appName, "Registration Failed", "OK",
-                        () {
-                      Navigator.pop(context);
-                    });
-                  }
-                });
-              }
-            },
-                btnColor: Colors.deepOrange,
-                borderColor: Colors.white,
-                txtColor: Colors.white,
-                borderRadius: 20)
+                }
+              },
+              btnColor: Colors.deepOrange,
+              borderColor: Colors.white,
+              txtColor: Colors.white,
+              borderRadius: 20,
+            ),
           ],
         ),
         const SizedBox(
@@ -282,9 +210,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 fontSize: 14,
               ),
               children: <TextSpan>[
-                const TextSpan(text: "Already have an account?"),
+                const TextSpan(text: "Dont have an account?"),
                 TextSpan(
-                    text: "Sign In",
+                    text: "Sign Up",
                     style: const TextStyle(
                       color: Colors.deepOrange,
                       fontWeight: FontWeight.bold,
@@ -292,7 +220,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         Navigator.of(context).pushNamedAndRemoveUntil(
-                            "/login", (route) => false);
+                            "/register", (route) => false);
                       }),
               ],
             ),
