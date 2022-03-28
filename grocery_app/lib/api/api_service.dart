@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grocery_app/config.dart';
 import 'package:grocery_app/models/category.dart';
+import 'package:grocery_app/models/login_response_response.dart';
 import 'package:grocery_app/models/product.dart';
 import 'package:grocery_app/models/product_filter.dart';
+import 'package:grocery_app/utils/shared_service.dart';
 import 'package:http/http.dart' as http;
 
 final apiService = Provider((ref) => APIService());
@@ -99,6 +101,7 @@ class APIService {
       ),
     );
     if (response.statusCode == 200) {
+      await SharedService.setLoginDetails(loginResponseJson(response.body));
       return true;
     } else {
       return false;

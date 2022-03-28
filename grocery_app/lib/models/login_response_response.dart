@@ -1,7 +1,12 @@
-class LoginResponse {
+import 'dart:convert';
+
+LoginResponseModel loginResponseJson(String str) =>
+    LoginResponseModel.fromJson(json.decode(str));
+
+class LoginResponseModel {
   late final String message;
   late final Data data;
-  LoginResponse.fromJson(Map<String, dynamic> json) {
+  LoginResponseModel.fromJson(Map<String, dynamic> json) {
     message = json["message"];
     data = Data.fromJson(json["data"]);
   }
@@ -11,7 +16,6 @@ class LoginResponse {
 
     _data["message"] = message;
     _data["data"] = data.toJson();
-    
 
     return _data;
   }
