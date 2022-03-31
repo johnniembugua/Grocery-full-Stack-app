@@ -14,7 +14,7 @@ abstract class DBHelper {
     try {
       var databasePath = await getDatabasesPath();
 
-      String _path = p.join(databasePath, "flutter_sqflite.db");
+      String _path = p.join(databasePath, 'flutter_sqflite.db');
       _db = await openDatabase(_path,
           version: _version, onCreate: onCreate, onUpgrade: onUpgrade);
     } catch (e) {
