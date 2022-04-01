@@ -5,7 +5,8 @@ const io = new Server(server);
 
 const PORT=process.env.PORT || 3700;
 
-io.on("connection",(socket)=>{  socket.on("position-change",(data)=>{
+io.on("connection",(socket)=>{ socket.on("position-change",(data)=>{
+    console.log(data);
     io.emit("position-change",data);
 
 }) ;
