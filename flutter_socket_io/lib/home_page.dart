@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
               key: globalKey,
               child: Column(
                 children: [
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 30),
                   FormHelper.inputFieldWidget(
                     context,
                     "Latitude",
