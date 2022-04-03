@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.flutter_receiver_live_location">
+    package="com.example.live_location_receiver">
    <application
-        android:label="flutter_receiver_live_location"
+        android:label="live_location_receiver"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
