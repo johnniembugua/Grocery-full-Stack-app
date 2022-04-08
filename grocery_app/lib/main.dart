@@ -14,6 +14,8 @@ void main() async {
   if (_result) {
     _defaultHome = const HomePage();
   }
+  print(
+      "login details: ${await SharedService.loginDetails().then((value) => value!.data.token)}");
   runApp(const ProviderScope(child: MyApp()));
 }
 

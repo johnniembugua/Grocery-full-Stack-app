@@ -23,6 +23,7 @@ class SharedService {
 
     if (isCacheKeyExist) {
       var cacheData = await APICacheManager().getCacheData(KEY_NAME);
+      print(cacheData.syncData.toString());
       return loginResponseJson(cacheData.syncData);
     }
     return null;

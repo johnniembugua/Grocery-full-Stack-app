@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_app/components/product_card.dart';
-import 'package:grocery_app/models/category.dart';
-import 'package:grocery_app/models/product.dart';
+import 'package:grocery_app/utils/shared_service.dart';
 import 'package:grocery_app/widgets/widget_home_categories.dart';
 import 'package:grocery_app/widgets/widget_home_products.dart';
 
@@ -10,12 +8,43 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future<String> getUserData() async {
+      String userData = await SharedService.loginDetails()
+          .then((value) => value!.data.fullName);
+      return userData;
+    }
+
     return Scaffold(
       body: Container(
           child: ListView(
-        children: const [
-          HomeCategoriesWidget(),
-          HomeProductWidget(),
+        children: [
+          const HomeCategoriesWidget(),
+          const HomeProductWidget(),
+          ElevatedButton(
+            onPressed: () async {
+              await SharedService.logout(context);
+            },
+            child: const Text("Logout"),
+          ),
+          FutureBuilder(
+            future: getUserData(),
+            builder: (BuildContext context, AsyncSnapshot userNameSnapshot) {
+              Widget widget;
+              if (userNameSnapshot.hasData) {
+                widget = Text(userNameSnapshot.data);
+              } else if (userNameSnapshot.hasError) {
+                widget = Text('Error: ${userNameSnapshot.error}');
+              } else {
+                widget = Container(
+                  color: Colors.white,
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+              return widget;
+            },
+          ),
         ],
       )),
     );
