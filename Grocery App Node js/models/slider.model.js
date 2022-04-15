@@ -24,7 +24,16 @@ const slider = mongoose.model(
 
         }
 
+    },
+    { toJSON:{
+        transform:function(doc,ret){
+            ret.sliderId=ret._id.toString();
+            delete ret._id;
+            delete ret.__v;
+        }
     }
+}
+    
     )
 );
 
