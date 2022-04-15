@@ -37,6 +37,7 @@ dependencies:
   snippet_coder_utils: ^1.0.12
   # flutter_cache_manager: ^3.3.0
   api_cache_manager: ^1.0.2
+  carousel_slider: ^4.0.0
 
 dev_dependencies:
   flutter_test:

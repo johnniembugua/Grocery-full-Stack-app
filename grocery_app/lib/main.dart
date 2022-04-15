@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:grocery_app/pages/dashboard_page.dart';
 import 'package:grocery_app/pages/home_page.dart';
 import 'package:grocery_app/pages/products_page.dart';
 import 'package:grocery_app/pages/register_page.dart';
@@ -12,10 +13,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   bool _result = await SharedService.isLoggedIn();
   if (_result) {
-    _defaultHome = const HomePage();
+    print(
+        "login details: ${await SharedService.loginDetails().then((value) => value!.data.token)}");
+    _defaultHome = const DashboardPage();
   }
-  print(
-      "login details: ${await SharedService.loginDetails().then((value) => value!.data.token)}");
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -35,7 +37,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => _defaultHome,
         '/register': (BuildContext context) => const RegisterPage(),
         '/login': (BuildContext context) => const LoginPage(),
-        '/home': (BuildContext context) => const HomePage(),
+        '/home': (BuildContext context) => const DashboardPage(),
         '/products': (BuildContext context) => const ProductsPage(),
       },
     );
