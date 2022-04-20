@@ -40,6 +40,7 @@ exports.create = (req, res, next) => {
 
 exports.findAll = (req, res, next) => {
     var model = {
+        productIds:req.query.productIds,
         productName: req.query.productName,
         categoryId:req.query.categoryId,
         pageSize: req.query.pageSize,
